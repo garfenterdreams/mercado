@@ -23,7 +23,7 @@ on:
 env:
   PRODUCT_NAME: mercado
   PRODUCT_DISPLAY: "Spurtcommerce Marketplace"
-  DOCKER_IMAGE: "spurtcommerce/marketplace-api:latest"
+  DOCKER_IMAGE: "spurtcommerce/marketplace-api:5.1.0"
   PORT: "9000"
   HEALTH_PATH: "/"
 
