@@ -36,7 +36,7 @@ export class LiveAddressService {
 
     // delete address
     public async delete(address: Partial<LiveAddress>): Promise<DeleteResult> {
-        return await this.liveAddressRepository.repository.delete(address);
+        return await this.liveAddressRepository.repository.delete(address.id);
     }
 
     // find Customer addresses

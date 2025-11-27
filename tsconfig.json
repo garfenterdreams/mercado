@@ -38,5 +38,12 @@
             "es2015.symbol.wellknown",
             "esnext.asynciterable"
         ]
-    }
+    },
+    "exclude": [
+        "src/database/factories",
+        "src/database/seeds",
+        "test",
+        "node_modules",
+        "dist"
+    ]
 }

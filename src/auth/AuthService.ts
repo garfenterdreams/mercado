@@ -9,7 +9,6 @@
 import * as express from 'express';
 import jwt from 'jsonwebtoken';
 import { Service } from 'typedi';
-import { OrmRepository } from 'typeorm-typedi-extensions';
 import { User } from '../api/core/models/User';
 import { UserRepository } from '../api/core/repositories/UserRepository';
 import { CustomerRepository } from '../api/core/repositories/CustomerRepository';
@@ -24,11 +23,11 @@ export class AuthService {
 
     constructor(
         @Logger(__filename) private log: LoggerInterface,
-        @OrmRepository() private userRepository: UserRepository,
-        @OrmRepository() private customerRepository: CustomerRepository,
-        @OrmRepository() private vendorRepository: VendorRepository,
-        @OrmRepository() private userGroupRepository: UserGroupRepository,
-        @OrmRepository() private accessTokenRepository: AccessTokenRepository
+        private userRepository: UserRepository,
+        private customerRepository: CustomerRepository,
+        private vendorRepository: VendorRepository,
+        private userGroupRepository: UserGroupRepository,
+        private accessTokenRepository: AccessTokenRepository
     ) { }
 
     public async parseBasicAuthFromRequest(req: express.Request): Promise<any> {
@@ -61,7 +60,7 @@ export class AuthService {
     }
 
     public async validateUser(userId: number): Promise<User> {
-        const user = await this.userRepository.findOne({
+        const user = await this.userRepository.repository.findOne({
             where: {
                 userId, deleteFlag: 0, isActive: 1,
             },
@@ -74,7 +73,7 @@ export class AuthService {
     }
 
     public async validateCustomer(userId: number): Promise<any> {
-        const customer = await this.customerRepository.findOne({
+        const customer = await this.customerRepository.repository.findOne({
             where: {
                 id: userId, isActive: 1, deleteFlag: 0,
             },
@@ -86,7 +85,7 @@ export class AuthService {
     }
 
     public async validateVendor(userId: number): Promise<any> {
-        const vendors = await this.vendorRepository.findOne({
+        const vendors = await this.vendorRepository.repository.findOne({
             where: {
                 vendorId: userId,
             }, relations: ['customer'],
@@ -100,7 +99,7 @@ export class AuthService {
     }
 
     public async validateUnapprovedVendor(userId: number): Promise<any> {
-        const vendors = await this.vendorRepository.findOne({
+        const vendors = await this.vendorRepository.repository.findOne({
             where: {
                 vendorId: userId,
             }, relations: ['customer'],
@@ -125,7 +124,7 @@ export class AuthService {
             const Crypto = require('crypto-js');
             const bytes = Crypto.AES.decrypt(token, env.cryptoSecret);
             const originalEncryptedString = bytes.toString(Crypto.enc.Utf8);
-            const checkTokenRevoke: any = await this.accessTokenRepository.findOne({
+            const checkTokenRevoke: any = await this.accessTokenRepository.repository.findOne({
                 where: {
                     token: originalEncryptedString,
                 },
@@ -138,7 +137,7 @@ export class AuthService {
     }
 
     public async validateUserGroup(userGroupId: number): Promise<any> {
-        const group = await this.userGroupRepository.findOne({
+        const group = await this.userGroupRepository.repository.findOne({
             where: {
                 groupId: userGroupId,
             },

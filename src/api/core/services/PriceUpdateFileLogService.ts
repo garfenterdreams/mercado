@@ -27,7 +27,7 @@ export class PriceUpdateFileLogService {
     // findone a data
     public findOne(id: number): Promise<PriceUpdateFileLog> {
         this.log.info('Find a data');
-        return this.priceUpdateFileLogRepository.repository.findOne(id);
+        return this.priceUpdateFileLogRepository.repository.findOne({ where: { id } });
     }
     // find a data
     public findAll(productSpecial: any): Promise<PriceUpdateFileLog[]> {

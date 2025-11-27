@@ -60,15 +60,15 @@ export class OrderProcessService {
         const CustomerRepository = getManager().getRepository(Customer);
         // ----
         const orderRepository = getManager().getRepository(Order);
-        const orderData: any = await orderRepository.findOne(orderId);
+        const orderData: any = await orderRepository.findOne({ where: { orderId } });
         if (!orderData) {
             return {
                 status: 1,
                 message: 'Invalid Order Id',
             };
         }
-        const setting = await settingRepository.findOne();
-        const currencySymbol = await currencyRepository.findOne(setting.storeCurrencyId);
+        const setting = await settingRepository.findOne({});
+        const currencySymbol = await currencyRepository.findOne({ where: { currencyId: setting.storeCurrencyId } });
         orderData.currencyRight = currencySymbol.symbolRight;
         orderData.currencyLeft = currencySymbol.symbolLeft;
 
@@ -106,14 +106,14 @@ export class OrderProcessService {
                 } else if (vendor.commission > 0) {
                     vendorPayments.commissionAmount = vendorPayments.amount * (vendor.commission / 100);
                 } else {
-                    const defaultCommission = await VendorGlobalSettingRepository.findOne();
+                    const defaultCommission = await VendorGlobalSettingRepository.findOne({});
                     const defCommission = defaultCommission.defaultCommission;
                     vendorPayments.commissionAmount = vendorPayments.amount * (defCommission / 100);
                 }
                 await vendorPaymentRepository.save(vendorPayments);
             }
             const productInformation = await orderProductRepository.findOne({ where: { orderProductId: orderProduct[i].orderProductId }, select: ['orderProductId', 'orderId', 'productId', 'name', 'model', 'quantity', 'total', 'productPrice', 'basePrice', 'discountAmount', 'discountedAmount', 'skuName', 'taxValue', 'taxType', 'orderProductPrefixId', 'couponDiscountAmount'] });
-            const productImageData: any = await productRepository.findOne(productInformation.productId);
+            const productImageData: any = await productRepository.findOne({ where: { productId: productInformation.productId } });
             let productImageDetail;
                 productImageDetail = await productImageRepository.findOne({ where: { productId: productInformation.productId, defaultImage: 1 } });
             productImageData.productInformationData = productInformation;
@@ -124,8 +124,8 @@ export class OrderProcessService {
                 await CustomerCartRepository.delete(cart.id);
             }
         }
-        const emailContent = await EmailTemplateRepository.findOne(5);
-        const adminEmailContent = await EmailTemplateRepository.findOne(6);
+        const emailContent = await EmailTemplateRepository.findOne({ where: { emailTemplateId: 5 } });
+        const adminEmailContent = await EmailTemplateRepository.findOne({ where: { emailTemplateId: 6 } });
         const nowDate = new Date();
         const today = ('0' + nowDate.getDate()).slice(-2) + '.' + ('0' + (nowDate.getMonth() + 1)).slice(-2) + '.' + nowDate.getFullYear();
         const customerFirstName = orderData.shippingFirstname;
@@ -139,7 +139,7 @@ export class OrderProcessService {
             const val = user.username;
             adminId.push(val);
         }
-        const logo = await settingRepository.findOne();
+        const logo = await settingRepository.findOne({});
         const vendorInvoice = await VendorInvoiceRepository.find({ where: { orderId: orderData.orderId } });
         if (vendorInvoice.length > 0) {
             for (const vendInvoice of vendorInvoice) {
@@ -150,7 +150,7 @@ export class OrderProcessService {
                 const vendorInvoiceItem = await VendorInvoiceItemRepository.find({ where: { vendorInvoiceId: vendInvoice.vendorInvoiceId } });
                 for (const vendInvoiceItem of vendorInvoiceItem) {
                     const vendorProductInformation = await orderProductRepository.findOne({ where: { orderProductId: vendInvoiceItem.orderProductId }, select: ['orderProductId', 'orderId', 'productId', 'name', 'model', 'quantity', 'total', 'productPrice', 'basePrice', 'skuName', 'taxValue', 'taxType', 'orderProductPrefixId'] });
-                    const vendorProductImageData: any = await productRepository.findOne(vendorProductInformation.productId);
+                    const vendorProductImageData: any = await productRepository.findOne({ where: { productId: vendorProductInformation.productId } });
                     let vendorProductImageDetail;
                         vendorProductImageDetail = await productImageRepository.findOne({ where: { productId: vendorProductInformation.productId, defaultImage: 1 } });
                     vendorProductImageData.productInformationData = vendorProductInformation;

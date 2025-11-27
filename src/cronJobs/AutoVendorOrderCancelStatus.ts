@@ -19,7 +19,7 @@ export const startVendorOrderAutoCancelJob = () => {
         const orderProduct = getConnection().getRepository(OrderProduct);
         const orderStatus = getConnection().getRepository(OrderStatus);
         const sku = getConnection().getRepository(Sku);
-        const adminSettingsData = await adminSettingsRepo.findOne();
+        const adminSettingsData = await adminSettingsRepo.findOne({});
 
         if (!adminSettingsData?.isAutoApproveCancellation) {
             const timeframeValue = adminSettingsData.sellerApprovalTimeframeValue;
@@ -28,7 +28,7 @@ export const startVendorOrderAutoCancelJob = () => {
             const startDateJS = moment.utc().subtract(timeframeValue, timeframeUnit.toLowerCase()).toDate();
 
             const orderCancelProduct = await orderProductCancelLog.find({
-                where: { createdDate: LessThan(startDateJS), status: 3 },
+                where: { createdDate: LessThan(startDateJS) as any, status: 3 },
             });
             if (orderCancelProduct) {
                 for (const orderProductDetail of orderCancelProduct) {
