@@ -121,9 +121,9 @@ RUN npm install \
     && cp  -r ./dist/src/public/apidoc/img ./dist-obf/src/public/apidoc/img \
     && cp  -r ./dist/src/api/swagger.json ./dist-obf/src/api/swagger.json \
     && cp  -r ./dist/src/public/favicon.ico ./dist-obf/src/public/favicon.ico \
-    && cp  -r ./dist/add-ons/Payment/Paypal/template ./dist-obf/add-ons/Payment/Paypal/ \
-    && cp  -r ./dist/add-ons/Payment/Razorpay/template ./dist-obf/add-ons/Payment/Razorpay/ \
-    && cp  -r ./dist/add-ons/Payment/Stripe/template ./dist-obf/add-ons/Payment/Stripe/ \
+    && (test -d ./dist/add-ons/Payment/Paypal/template && cp -r ./dist/add-ons/Payment/Paypal/template ./dist-obf/add-ons/Payment/Paypal/ || true) \
+    && (test -d ./dist/add-ons/Payment/Razorpay/template && cp -r ./dist/add-ons/Payment/Razorpay/template ./dist-obf/add-ons/Payment/Razorpay/ || true) \
+    && (test -d ./dist/add-ons/Payment/Stripe/template && cp -r ./dist/add-ons/Payment/Stripe/template ./dist-obf/add-ons/Payment/Stripe/ || true) \
     && rm -rf src \
     && rm -rf add-ons \
     && rm -rf commands \
