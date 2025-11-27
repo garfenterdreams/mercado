@@ -75,15 +75,20 @@ ENV LOGIN_ATTEPMTS_COUNT=5
 ENV LOGIN_ATTEPMTS_MINUTES=30
 
 ENV JWT_SECRET=1333@#$%123$%^&*dajcskdn89?)()#$@&haSS
+ENV JWT_EXPIRY_TIME=7d
 ENV CRYPTO_SECRET=da$*908nkkd3@^(&*fgdnNNMMod3?)()#$@&SYU
 
-ENV AVAILABLE_IMAGE_TYPES='PNG,png,jpg,jpeg,svg'
-ENV AVAILABLE_ALLOW_TYPES='PDF,pdf,xlx,xlsx,doc,docx,'
+ENV AVAILABLE_IMAGE_TYPES='PNG,png,jpg,jpeg,svg,webp'
+ENV AVAILABLE_ALLOW_TYPES='PDF,pdf,xlx,xlsx,doc,docx'
+ENV IMAGE_SERVER=local
+ENV IMAGE_UPLOAD_SIZE=2
 
 ENV ADMIN_FORGET_PASSWORD_URL=http://localhost/admin/#/set-password/
 ENV PRODUCT_REDIRECT_URL=http://localhost/products/productdetails/
 ENV CATEGORY_REDIRECT_URL=http://localhost/products/
 ENV PLUGIN_HOME_REDIRECT_URL=http://localhost/home
+ENV VENDOR_FORGET_PASSWORD_URL=http://localhost/seller/#/auth/set-password
+ENV VENDOR_MAIL_VERIFY_URL=http://localhost/seller/#/auth/verification
 
 ENV VERIFICATION_CODE_EXPIRATION_TIME='00:10:00'
 
@@ -99,6 +104,7 @@ ENV PEID=''
 ENV TEMPLATE_ID=''
 
 ENV SOCKET_PORT=4001
+ENV KYC_MANDATE=0
 
 # Install node packages, install serve, build the app, and remove dependencies at the end
 RUN npm install \
