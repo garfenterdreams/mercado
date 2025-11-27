@@ -1,6 +1,9 @@
 # Start your image with a node base image
 FROM node:18-alpine
 
+# Install mysql-client for database initialization
+RUN apk --update add imagemagick mysql-client
+
 # This directory is the main application directory
 WORKDIR /spurtcommerce-api
 
@@ -58,56 +61,42 @@ ENV SWAGGER_FILE=api/swagger.json
 ENV SWAGGER_USERNAME=admin
 ENV SWAGGER_PASSWORD=1234
 
-ENV STORE_URL =http://localhost:8000/api
-
-ENV CANCEL_URL =http://localhost:8000/api
-
+ENV STORE_URL=http://localhost:8000/api
+ENV CANCEL_URL=http://localhost:8000/api
 ENV BASE_URL=http://localhost:8000/api
+ENV STORE_REDIRECT_URL=http://localhost
+ENV ADMIN_REDIRECT_URL=http://localhost/admin
+ENV VENDOR_REDIRECT_URL=http://localhost/vendor
+ENV IMAGE_URL=IMAGE_URL
+ENV STORE_FORGET_PASSWORD_URL=STORE_FORGET_PASSWORD_URL
+ENV FORGET_PASSWORD_URL=FORGET_PASSWORD_URL
 
-ENV STORE_REDIRECT_URL =http://localhost
+ENV LOGIN_ATTEPMTS_COUNT=5
+ENV LOGIN_ATTEPMTS_MINUTES=30
 
-ENV ADMIN_REDIRECT_URL =http://localhost/admin
+ENV JWT_SECRET=1333@#$%123$%^&*dajcskdn89?)()#$@&haSS
+ENV CRYPTO_SECRET=da$*908nkkd3@^(&*fgdnNNMMod3?)()#$@&SYU
 
-ENV VENDOR_REDIRECT_URL =http://localhost/vendor
+ENV AVAILABLE_IMAGE_TYPES='PNG,png,jpg,jpeg,svg'
+ENV AVAILABLE_ALLOW_TYPES='PDF,pdf,xlx,xlsx,doc,docx,'
 
-ENV IMAGE_URL = IMAGE_URL
+ENV ADMIN_FORGET_PASSWORD_URL=http://localhost/admin/#/set-password/
+ENV PRODUCT_REDIRECT_URL=http://localhost/products/productdetails/
+ENV CATEGORY_REDIRECT_URL=http://localhost/products/
+ENV PLUGIN_HOME_REDIRECT_URL=http://localhost/home
 
-ENV STORE_FORGET_PASSWORD_URL = STORE_FORGET_PASSWORD_URL
+ENV VERIFICATION_CODE_EXPIRATION_TIME='00:10:00'
 
-ENV FORGET_PASSWORD_URL = FORGET_PASSWORD_URL
+ENV MFA_TEMP_TOKEN_EXPIRY='120m'
+ENV MFA_TEMP_TOKEN_SECRET='rMcq9hCJ;6a8oH('
 
-ENV LOGIN_ATTEPMTS_COUNT = 5
-
-ENV LOGIN_ATTEPMTS_MINUTES = 30
-
-ENV JWT_SECRET = 1333@#$%123$%^&*dajcskdn89?)()#$@&haSS
-
-ENV CRYPTO_SECRET = da$*908nkkd3@^(&*fgdnNNMMod3?)()#$@&SYU
-
-ENV AVAILABLE_IMAGE_TYPES = 'PNG,png,jpg,jpeg,svg'
-
-ENV AVAILABLE_ALLOW_TYPES = 'PDF,pdf,xlx,xlsx,doc,docx,'
-
-ENV ADMIN_FORGET_PASSWORD_URL = http://localhost/admin/#/set-password/
-
-ENV PRODUCT_REDIRECT_URL = http://localhost/products/productdetails/
-
-ENV CATEGORY_REDIRECT_URL = http://localhost/products/
-
-ENV PLUGIN_HOME_REDIRECT_URL = http://localhost/home
-
-ENV VERIFICATION_CODE_EXPIRATION_TIME = '00:10:00'
-
-ENV MFA_TEMP_TOKEN_EXPIRY = '120m'
-ENV MFA_TEMP_TOKEN_SECRET = 'rMcq9hCJ;6a8oH('
-
-ENV USER_NAME = ''
-ENV SENDER_NAME = ''
-ENV API_KEY = ''
-ENV HOST_NAME = ''
-ENV SMS_TYPE = ''
-ENV PEID = ''
-ENV TEMPLATE_ID = ''
+ENV USER_NAME=''
+ENV SENDER_NAME=''
+ENV API_KEY=''
+ENV HOST_NAME=''
+ENV SMS_TYPE=''
+ENV PEID=''
+ENV TEMPLATE_ID=''
 
 ENV SOCKET_PORT=4001
 
@@ -131,10 +120,14 @@ RUN npm install \
     && rm -rf package-lock.json \
     && rm -rf dist
 
-RUN apk --update add imagemagick
+# Copy SQL schema for database initialization (keep it for entrypoint)
+COPY spurtcommerce_v5.2_community.sql /spurtcommerce-api/init.sql
+
+# Copy and set up entrypoint script
+COPY entrypoint.sh /spurtcommerce-api/entrypoint.sh
+RUN chmod +x /spurtcommerce-api/entrypoint.sh
 
 EXPOSE 8000 4001
 
-# Start the app using serve command
-# CMD [ "pm2", "start", "dist/src/app.js" ]
-CMD [ "node", "dist-obf/src/app.js" ]
+# Use entrypoint for database initialization
+ENTRYPOINT ["/spurtcommerce-api/entrypoint.sh"]
