@@ -53,5 +53,10 @@ else
     echo "Database already has ${TABLE_COUNT} tables, skipping initialization"
 fi
 
+# Start nginx in background for frontend and API proxy
+echo "Starting nginx for frontend..."
+nginx
+
+# Start Spurt Commerce API (this will be the main process)
 echo "Starting Spurt Commerce API..."
 exec node dist-obf/src/app.js

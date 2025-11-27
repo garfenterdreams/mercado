@@ -1,8 +1,8 @@
 # Start your image with a node base image
 FROM node:18-alpine
 
-# Install mysql-client for database initialization
-RUN apk --update add imagemagick mysql-client
+# Install mysql-client for database initialization and nginx for serving frontend
+RUN apk --update add imagemagick mysql-client nginx
 
 # This directory is the main application directory
 WORKDIR /spurtcommerce-api
@@ -123,11 +123,21 @@ RUN npm install \
 # Copy SQL schema for database initialization (keep it for entrypoint)
 COPY spurtcommerce_v5.2_community.sql /spurtcommerce-api/init.sql
 
+# Setup frontend - Admin and Vendor panels
+RUN mkdir -p /var/www/html
+COPY frontend/admin /var/www/html/admin
+COPY frontend/seller /var/www/html/seller
+
+# Setup nginx configuration
+COPY nginx.conf /etc/nginx/http.d/default.conf
+RUN rm -f /etc/nginx/http.d/default.conf.bak 2>/dev/null || true
+
 # Copy and set up entrypoint script
 COPY entrypoint.sh /spurtcommerce-api/entrypoint.sh
 RUN chmod +x /spurtcommerce-api/entrypoint.sh
 
-EXPOSE 8000 4001
+# Expose ports: 80 for nginx (frontend + API proxy), 8000 for API direct, 4001 for socket
+EXPOSE 80 8000 4001
 
-# Use entrypoint for database initialization
+# Use entrypoint for database initialization and starting services
 ENTRYPOINT ["/spurtcommerce-api/entrypoint.sh"]
