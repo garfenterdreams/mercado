@@ -106,6 +106,26 @@ ENV TEMPLATE_ID=''
 ENV SOCKET_PORT=4001
 ENV KYC_MANDATE=0
 
+# Payment redirect URLs
+ENV PAYMENT_SUCCESS_REDIRECT_URL=http://localhost/payment-success
+ENV PAYMENT_FAIL_REDIRECT_URL=http://localhost/payment-failed
+ENV PAYMENT_CANCEL_REDIRECT_URL=http://localhost/payment-cancelled
+
+# SSL/Mail settings (can be overridden at runtime)
+ENV MAIL_DRIVER=''
+ENV MAIL_HOST=''
+ENV MAIL_PORT=''
+ENV MAIL_USERNAME=''
+ENV MAIL_PASSWORD=''
+ENV MAIL_SECURE=''
+ENV MAIL_FROM=''
+
+# AWS S3 settings (optional, for S3 storage)
+ENV AWS_ACCESS_KEY_ID=''
+ENV AWS_SECRET_ACCESS_KEY=''
+ENV AWS_DEFAULT_REGION=''
+ENV AWS_BUCKET=''
+
 # Install node packages, install serve, build the app, and remove dependencies at the end
 RUN npm install \
     && npm run build \
