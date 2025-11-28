@@ -124,8 +124,27 @@ ENV MAIL_FROM=''
 # AWS S3 settings (optional, for S3 storage)
 ENV AWS_ACCESS_KEY_ID=''
 ENV AWS_SECRET_ACCESS_KEY=''
-ENV AWS_DEFAULT_REGION=''
+ENV AWS_DEFAULT_REGION='us-east-1'
 ENV AWS_BUCKET=''
+
+# Google Cloud Storage (optional, for GCP storage)
+ENV GCP_CDN_FILEPATH=''
+ENV GCP_CDN_PROJECT_ID=''
+ENV GCP_CDN_BUCKET=''
+
+# Localization settings
+ENV LOCALE=es_GT
+ENV CURRENCY=GTQ
+ENV TIMEZONE=America/Guatemala
+
+# SMS Configuration (optional)
+ENV SMS_USERNAME=''
+ENV SMS_SENDER=''
+ENV SMS_API_KEY=''
+ENV SMS_HOST=''
+
+# Mail encryption
+ENV MAIL_ENCRYPTION=''
 
 # Install node packages, install serve, build the app, and remove dependencies at the end
 RUN npm install \
