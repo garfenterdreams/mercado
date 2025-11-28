@@ -109,6 +109,7 @@ ENV KYC_MANDATE=0
 # Payment redirect URLs
 ENV PAYMENT_SUCCESS_REDIRECT_URL=http://localhost/payment-success
 ENV PAYMENT_FAIL_REDIRECT_URL=http://localhost/payment-failed
+ENV PAYMENT_FAILURE_REDIRECT_URL=http://localhost/payment-failed
 ENV PAYMENT_CANCEL_REDIRECT_URL=http://localhost/payment-cancelled
 
 # SSL/Mail settings (can be overridden at runtime)
